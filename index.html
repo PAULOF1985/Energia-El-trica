@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Energia Residencial | Monitoramento Diário</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <header class="hero">
+      <div>
+        <h1>Sistema de Monitoramento de Energia Residencial</h1>
+        <p>
+          Acompanhe o consumo diário, compare com o dia anterior e identifique
+          oportunidades de economia.
+        </p>
+      </div>
+      <button id="regenerateBtn" class="btn-primary">Simular novo mês</button>
+    </header>
+
+    <main class="dashboard-grid">
+      <section class="card metric-card">
+        <h2>Consumo do dia atual</h2>
+        <p class="metric" id="todayConsumption">-- kWh</p>
+        <p class="subtext" id="todayCost">R$ --</p>
+      </section>
+
+      <section class="card metric-card">
+        <h2>Comparativo com ontem</h2>
+        <p class="metric" id="dayComparison">--%</p>
+        <p class="subtext" id="comparisonStatus">Aguardando dados...</p>
+      </section>
+
+      <section class="card metric-card">
+        <h2>Média diária do mês</h2>
+        <p class="metric" id="monthAverage">-- kWh</p>
+        <p class="subtext" id="monthProjection">Projeção mensal: R$ --</p>
+      </section>
+
+      <section class="card chart-card">
+        <h2>Consumo diário (kWh)</h2>
+        <canvas id="consumptionChart"></canvas>
+      </section>
+
+      <section class="card table-card">
+        <h2>Histórico dia a dia</h2>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Dia</th>
+                <th>Consumo (kWh)</th>
+                <th>Custo (R$)</th>
+                <th>Variação vs. dia anterior</th>
+              </tr>
+            </thead>
+            <tbody id="historyTable"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <small>
+        Simulação residencial com tarifa fixa de R$ <span id="tariffValue"></span>
+        por kWh.
+      </small>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
