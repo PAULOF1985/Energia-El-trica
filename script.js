@@ -20,6 +20,7 @@ const calculateVariation = (today, yesterday) => {
 
 const dashboard = {
   chart: null,
+  currentData: [],
 
   init() {
     this.bindEvents();
@@ -31,16 +32,24 @@ const dashboard = {
     document
       .getElementById("regenerateBtn")
       .addEventListener("click", () => this.renderSimulation());
+
+    document
+      .getElementById("downloadBtn")
+      .addEventListener("click", () => this.downloadCsvReport());
   },
 
   renderSimulation() {
     const data = generateConsumptionData();
+    this.currentData = data;
+
     const today = data[data.length - 1];
     const yesterday = data[data.length - 2];
     const dayVariation = calculateVariation(today, yesterday);
-    const monthlyAverage = +(data.reduce((acc, value) => acc + value, 0) / data.length).toFixed(2);
+    const monthlyAverage = +(
+      data.reduce((acc, value) => acc + value, 0) / data.length
+    ).toFixed(2);
 
-    this.updateMetrics({ today, yesterday, dayVariation, monthlyAverage });
+    this.updateMetrics({ today, dayVariation, monthlyAverage });
     this.updateTable(data);
     this.updateChart(data);
   },
@@ -125,6 +134,30 @@ const dashboard = {
         },
       },
     });
+  },
+
+  downloadCsvReport() {
+    if (!this.currentData.length) return;
+
+    const header = "Dia,Consumo (kWh),Custo (R$),Variacao vs Dia Anterior (%)";
+    const rows = this.currentData.map((value, index, arr) => {
+      const previous = arr[index - 1];
+      const variation = index === 0 ? "" : calculateVariation(value, previous);
+      return `${index + 1},${value.toFixed(2)},${(value * TARIFF).toFixed(2)},${variation}`;
+    });
+
+    const csvContent = [header, ...rows].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const downloadLink = document.createElement("a");
+    const dateStamp = new Date().toISOString().slice(0, 10);
+    downloadLink.href = url;
+    downloadLink.download = `relatorio-energia-${dateStamp}.csv`;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    URL.revokeObjectURL(url);
   },
 };
 
